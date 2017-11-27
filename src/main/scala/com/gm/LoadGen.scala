@@ -23,18 +23,13 @@ object LoadGen {
 
     val system: akka.actor.ActorSystem = ActorSystem("CommSystem")
     val dataFile = "/home/maasg/playground/sparkfun/SensorMultiplexer/temp-hum.csv"
-    val data = Source.fromFile(dataFile).getLines().flatMap { e =>
-      Try {
-        val Array(v1, v2) = e.split(",")
-        RawReading(v1.toDouble, v2.toDouble)
-      }.toOption
-    }
+    val data = Source.fromFile(dataFile).getLines().flatMap(RawReading.parse)
 
     println("kafkaProducer")
     val kafkaProducer = system.actorOf(Props(new PrintlnProducer(brokers, topics)), name = "kafkaProducerActor")
     println("simulationActor")
-    val simManager = system.actorOf(SimManagerActor.props(data.toList, 10, kafkaProducer))
-    //    val controlActor = system.actorOf(Props(new SerialCommActor(dataProducer)), name = "sensorDataActor")
+    val simManager = system.actorOf(SimManagerActor.props(data.toList, 1000, kafkaProducer))
+    val serialCommActor = system.actorOf(Props(new SerialCommActor(kafkaProducer)), name = "sensorDataActor")
     simManager ! Tick
     println("done")
 

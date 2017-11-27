@@ -5,6 +5,8 @@ import com.gm.Sensor
 import com.gm.sim.SensorSimActor.Tick
 
 class SensorSimActor (id: String, data: List[Sensor.RawReading], kafkaProducer: ActorRef) extends Actor with ActorLogging {
+
+  var _allData = data
   var _data = data
 
   def receive = {
@@ -12,7 +14,11 @@ class SensorSimActor (id: String, data: List[Sensor.RawReading], kafkaProducer: 
       val head::tail = _data
       val reading = Sensor.Reading.fromRawPlusTime(id, head)
       kafkaProducer ! reading
-      _data = if (tail != Nil) tail else data // circularly loop over the data
+
+      _data = if (tail != Nil) tail else {
+        _allData = _allData.reverse
+        _allData
+      } // circularly loop over the data
 
   }
 }

@@ -1,7 +1,6 @@
 package com.gm.serial
 
-import com.github.jodersky.flow.{Parity, Serial, SerialSettings, AccessDeniedException}
-
+import com.github.jodersky.flow.{AccessDeniedException, Parity, Serial, SerialSettings}
 import akka.actor._
 import akka.io.IO
 import akka.util.ByteString
@@ -9,14 +8,16 @@ import com.gm.kafka.DataProducer
 
 import scala.collection.mutable.ArrayBuffer
 import java.io._
-class SerialCommActor(dataProducer: ActorRef) extends Actor with ActorLogging {
+
+import com.gm.Sensor.{RawReading, Reading}
+
+class SerialCommActor(kafkaProducer: ActorRef) extends Actor with ActorLogging {
 
   println("Serial Comms: Opening port ...")
 
   val ctx = implicitly[ActorContext]
   var operator: ActorRef = _
   implicit val system = ctx.system
-  val dataFile = "/home/maasg/playground/sparkfun/SensorMultiplexer/temp-hum.csv"
 
   val port = "/dev/ttyUSB1"
   val settings = SerialSettings(
@@ -27,7 +28,6 @@ class SerialCommActor(dataProducer: ActorRef) extends Actor with ActorLogging {
   )
 
   IO(Serial) ! Serial.Open(port, settings)
-  val filePrinter = new PrintWriter(new FileWriter(dataFile, true))
 
   var buffer = new ParsingBuffer(ByteString())
   def receive = {
@@ -44,12 +44,9 @@ class SerialCommActor(dataProducer: ActorRef) extends Actor with ActorLogging {
     case Serial.Received(data) => {
       buffer = buffer.add(data)
       val (maybeData, newBuffer) = buffer.poll
-      maybeData.foreach{s =>
+      maybeData.flatMap(RawReading.parse).map(raw => Reading.fromRawPlusTime("office", raw)).foreach{ s =>
         println(s"received message: $s" )
-        filePrinter.println(s)
-        //val rate = s.toInt * 50
-
-        //dataProducer ! DataProducer.MessagesPerSecond(rate)
+        kafkaProducer ! s
       }
       buffer = newBuffer
     }
