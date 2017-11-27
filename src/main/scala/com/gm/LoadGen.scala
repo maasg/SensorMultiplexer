@@ -22,7 +22,7 @@ object LoadGen {
     val Array(brokers, topics) = args
 
     val system: akka.actor.ActorSystem = ActorSystem("CommSystem")
-    val dataFile = "/home/maasg/playground/sparkfun/SensorMultiplexer/temp-hum.csv"
+    val dataFile = "./data/temp-hum.csv"
     val data = Source.fromFile(dataFile).getLines().flatMap(RawReading.parse)
 
     println("kafkaProducer")
