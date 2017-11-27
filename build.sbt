@@ -1,19 +1,20 @@
-name := "kafkaproducer"
+name := "sensormultiplexer"
 
-version := "0.1.1"
+version := "0.1.2"
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.11.8"
 
-libraryDependencies += "org.apache.kafka" % "kafka_2.10" % "0.8.2.2" exclude("javax.jms", "jms")
+libraryDependencies += "org.apache.kafka" %% "kafka" % "0.8.2.2" exclude("javax.jms", "jms")
 
-libraryDependencies += "org.apache.spark" % "spark-streaming_2.10" % "1.5.1"
-    
-libraryDependencies += "org.apache.spark" % "spark-streaming-kafka_2.10" % "1.5.1"
+libraryDependencies ++= Seq(
+  "com.typesafe.akka" %% "akka-actor" % "2.4.0",
+  "com.typesafe.akka" %% "akka-testkit" % "2.4.0" % Test
+)
 
-libraryDependencies += "com.github.jodersky" % "flow_2.10" % "2.2.4"
+libraryDependencies += "com.github.jodersky" %% "flow" % "2.3.0"
 
-libraryDependencies += "com.github.jodersky" % "flow-native" % "2.2.4"
+libraryDependencies += "com.github.jodersky" % "flow-native" % "2.3.0"
 
-libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.2.4" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 
 

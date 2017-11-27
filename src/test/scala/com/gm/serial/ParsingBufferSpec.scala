@@ -7,7 +7,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class ParsingBufferSpec extends FlatSpec with Matchers {
 
-  val CR= 13.toByte
+  val CR = 13.toByte
   val LF = 10.toByte
 
   val CRLF = Array(CR,LF)

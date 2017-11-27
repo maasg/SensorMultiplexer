@@ -9,12 +9,14 @@ import com.gm.kafka.DataProducer
 
 import scala.collection.mutable.ArrayBuffer
 
-class ControlActor(dataProducer: ActorRef) extends Actor with ActorLogging {
+class SerialCommActor(dataProducer: ActorRef) extends Actor with ActorLogging {
+
+  println("Serial Comms: Opening port ...")
 
   val ctx = implicitly[ActorContext]
   implicit val system = ctx.system
 
-  val port = "/dev/ttyACM0"
+  val port = "/dev/ttyUSB1"
   val settings = SerialSettings(
     baud = 9600,
     characterSize = 8,
@@ -30,6 +32,7 @@ class ControlActor(dataProducer: ActorRef) extends Actor with ActorLogging {
       println("You're not allowed to open that port!")
     case Serial.CommandFailed(cmd: Serial.Open, reason) =>
       println("Could not open port for some other reason: " + reason.getMessage)
+      reason.printStackTrace()
     case Serial.Opened(settings) => {
       val operator = sender
       //do stuff with the operator, e.g. context become opened(op)
@@ -38,32 +41,14 @@ class ControlActor(dataProducer: ActorRef) extends Actor with ActorLogging {
       buffer = buffer.add(data)
       val (maybeData, newBuffer) = buffer.poll
       maybeData.foreach{s =>
-        println(s"received rate: $s" )
-        val rate = s.toInt * 50
+        println(s"received message: $s" )
+        //val rate = s.toInt * 50
 
-        dataProducer ! DataProducer.MessagesPerSecond(rate)
+        //dataProducer ! DataProducer.MessagesPerSecond(rate)
       }
       buffer = newBuffer
     }
   }
 }
 
-class ParsingBuffer(data: ByteString){
-  val CR = 13.toByte
-  val LF = 10.toByte
-  val CRLF = Array(CR,LF)
 
-  def add(other: ByteString): ParsingBuffer = {
-    new ParsingBuffer(data ++ other)
-  }
-
-  val isEmpty = data.isEmpty
-
-  def poll:(Option[String], ParsingBuffer) = {
-    val (maybeComplete, rest) = data.span(_ != CR)
-    val crlf = rest.take(2).toArray
-    if (crlf.deep == CRLF.deep) {
-      (Some(maybeComplete.utf8String), new ParsingBuffer(rest.drop(2)))
-    } else (None, this)
-  }
-}
