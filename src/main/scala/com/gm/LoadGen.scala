@@ -30,7 +30,7 @@ object LoadGen {
     println("simulationActor")
     val simManager = system.actorOf(SimManagerActor.props(data.toList, 1000, kafkaProducer))
     val serialCommActor = system.actorOf(Props(new SerialCommActor(kafkaProducer)), name = "sensorDataActor")
-    simManager ! Tick
+    simManager ! Tick //start
     println("done")
 
   }
