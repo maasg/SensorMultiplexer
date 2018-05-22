@@ -19,7 +19,7 @@ class SerialCommActor(kafkaProducer: ActorRef) extends Actor with ActorLogging {
   var operator: ActorRef = _
   implicit val system = ctx.system
 
-  val port = "/dev/ttyUSB1"
+  val port = "/dev/ttyACM0"
   val settings = SerialSettings(
     baud = 9600,
     characterSize = 8,

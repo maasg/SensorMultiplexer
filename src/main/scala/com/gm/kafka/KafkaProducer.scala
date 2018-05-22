@@ -23,7 +23,7 @@ class KafkaProducer(brokers: String, topic:String) extends Actor with ActorLoggi
     "org.apache.kafka.common.serialization.StringSerializer")
 
   val producer = new KKProducer[String, String](props)
-  println ("KafkaProducer: Connected. Producer created")
+  println (s"KafkaProducer: Connected to: $brokers. Producer created for topic: [$topic]")
 
   var counter = 0L
 

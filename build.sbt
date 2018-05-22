@@ -2,7 +2,7 @@ name := "sensormultiplexer"
 
 version := "0.1.2"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.11"
 
 libraryDependencies += "org.apache.kafka" %% "kafka" % "0.8.2.2" exclude("javax.jms", "jms")
 libraryDependencies ++= Seq(

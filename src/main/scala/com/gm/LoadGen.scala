@@ -26,7 +26,7 @@ object LoadGen {
     val data = Source.fromFile(dataFile).getLines().flatMap(RawReading.parse)
 
     println("kafkaProducer")
-    val kafkaProducer = system.actorOf(Props(new PrintlnProducer(brokers, topics)), name = "kafkaProducerActor")
+    val kafkaProducer = system.actorOf(Props(new KafkaProducer(brokers, topics)), name = "kafkaProducerActor")
     println("simulationActor")
     val simManager = system.actorOf(SimManagerActor.props(data.toList, 1000, kafkaProducer))
     val serialCommActor = system.actorOf(Props(new SerialCommActor(kafkaProducer)), name = "sensorDataActor")
