@@ -13,9 +13,9 @@ Usage: `sbt run <kafka broker> <kafka topic> [--use-sensor]`
 When the `--use-sensor` flag is used, the program expects a physical sensor connected
 For demonstration purposed, we have used:
 - a temperature-humidity sensor, like this one:
-![Arduino-compatible Microview + DTH11 tem+humidity sensor](./docs/sensor.jpg)
-- a manual-dial sensor display
-- a sound-level sensor
+  [Arduino-compatible Microview + DTH11 tem+humidity sensor](./docs/IMG_20171127_144744158.jpg)
+- [a manual-dial sensor display](./docs/IMG_20181207_130412.jpg)
+- [a sound-level sensor](./docs/IMG_20181114_135632.jpg) 
 
 The data reported to Kafka is a JSON object consisting of:
 - id : the id of the sensor (simulated sensors start with 'sim-')
