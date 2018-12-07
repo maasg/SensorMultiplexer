@@ -3,9 +3,9 @@ package com.gm
 import scala.util.Try
 
 object Sensor {
-  case class Reading(id: String, ts: Long, temp: Double, hum: Double)
+  case class Reading(id: String, ts: Long, value: Double)
   object Reading {
-    def fromRawPlusTime(id:String, raw: RawReading): Reading = Reading(id, System.currentTimeMillis(), raw.v1, raw.v2)
+    def fromRawPlusTime(id:String, raw: RawReading): Reading = Reading(id, System.currentTimeMillis(), raw.v1)
   }
   case class RawReading(v1: Double, v2: Double)
   object RawReading {
